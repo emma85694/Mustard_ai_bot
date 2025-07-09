@@ -1,8 +1,16 @@
 import logging
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext, ConversationHandler
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    CallbackContext,
+    filters,
+    ConversationHandler,
+    CallbackQueryHandler  # This was missing
+)
 
-# Bot configuration (with your token)
+# Bot configuration
 BOT_TOKEN = "7503724173:AAF0c2nharG0V781x6ajNMkIxRb6mgMJYS0"
 CHANNEL_LINK = "https://t.me/dawgs_on_sol"
 GROUP_LINK = "https://t.me/dawgs_on_solana"
@@ -12,7 +20,10 @@ TWITTER_LINK = "https://x.com/DAWGS_On_Sol"
 GET_WALLET = 1
 
 # Set up logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: CallbackContext) -> None:
