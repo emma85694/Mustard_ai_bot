@@ -8,9 +8,10 @@ from telegram.ext import (
     filters,
     ConversationHandler
 )
+import os
 
-# Configuration (replace with your details)
-BOT_TOKEN = "7503724173:AAF0c2nharG0V781x6ajNMkIxRb6mgMJYS0"
+# Configuration
+BOT_TOKEN = os.environ.get('7503724173:AAF0c2nharG0V781x6ajNMkIxRb6mgMJYS0')
 CHANNEL_LINK = "https://t.me/dawgs_on_sol"
 GROUP_LINK = "https://t.me/dawgs_on_solana"
 TWITTER_LINK = "https://x.com/DAWGS_On_Sol"
@@ -18,7 +19,7 @@ TWITTER_LINK = "https://x.com/DAWGS_On_Sol"
 # Conversation states
 GET_WALLET = 1
 
-# Enable logging
+# Set up logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -26,7 +27,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: CallbackContext) -> None:
-    """Send welcome message with instructions"""
     keyboard = [
         [
             InlineKeyboardButton("📢 Join Channel", url=CHANNEL_LINK),
@@ -49,7 +49,6 @@ async def start(update: Update, context: CallbackContext) -> None:
     )
 
 async def submit_wallet(update: Update, context: CallbackContext) -> int:
-    """Prompt user for wallet address"""
     query = update.callback_query
     await query.answer()
     await query.edit_message_text(
@@ -60,7 +59,6 @@ async def submit_wallet(update: Update, context: CallbackContext) -> int:
     return GET_WALLET
 
 async def handle_wallet(update: Update, context: CallbackContext) -> int:
-    """Process submitted wallet address"""
     sol_wallet = update.message.text.strip()
     
     # Basic SOL address validation
@@ -70,7 +68,7 @@ async def handle_wallet(update: Update, context: CallbackContext) -> int:
         )
         return GET_WALLET
     
-    # Send success message
+    # Success message
     await update.message.reply_text(
         "🎉 *Congratulations! You passed the Dawg Airdrop call!*\n\n"
         "💸 *100 SOL will be sent to your wallet!*\n\n"
@@ -81,15 +79,12 @@ async def handle_wallet(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 async def cancel(update: Update, context: CallbackContext) -> int:
-    """Cancel the conversation"""
     await update.message.reply_text("Process cancelled.")
     return ConversationHandler.END
 
 def main() -> None:
-    """Run the bot"""
     application = Application.builder().token(BOT_TOKEN).build()
     
-    # Conversation handler for wallet submission
     conv_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(submit_wallet, pattern="^submit_wallet$")],
         states={
@@ -101,7 +96,6 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(conv_handler)
     
-    # Run bot
     application.run_polling()
 
 if __name__ == "__main__":
